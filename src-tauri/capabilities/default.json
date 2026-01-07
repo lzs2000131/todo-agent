@@ -1,0 +1,14 @@
+{
+  "identifier": "default",
+  "description": "Default permissions for the app",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "sql:allow-load",
+    "sql:allow-execute",
+    "sql:allow-select",
+    "notification:default",
+    "global-shortcut:default",
+    "shell:default"
+  ]
+}
