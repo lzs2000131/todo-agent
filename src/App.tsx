@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react'
-import { Settings, Camera } from 'lucide-react'
+import { Settings, Camera, Trash2, Image } from 'lucide-react'
 import { TodoForm } from './components/todo/TodoForm'
 import { TodoList } from './components/todo/TodoList'
 import { TodoFilters } from './components/todo/TodoFilters'
 import { CategoryList } from './components/category/CategoryList'
 import { CategoryForm } from './components/category/CategoryForm'
-import { ScreenshotOverlay } from './components/screenshot/ScreenshotOverlay'
+import { ScreenshotQueuePanel } from './components/screenshot/ScreenshotQueuePanel'
 import { SettingsPage } from './components/settings/SettingsPage'
+import { TrashPage } from './components/trash/TrashPage'
 import { initDatabase } from './lib/db'
 import { useCategoryStore } from './stores/categoryStore'
 import { useTodoStore } from './stores/todoStore'
 import { useSettingsStore } from './stores/settingsStore'
+import { useScreenshotQueueStore } from './stores/screenshotQueueStore'
 import { useScreenshot } from './hooks/useScreenshot'
 import { useShortcut } from './hooks/useShortcut'
 import { startReminderScheduler } from './services/notification'
 import { startAutoBackup } from './services/s3'
-import type { ExtractedTodo } from './services/openai'
 import { Toast } from './components/ui/Toast'
 
 function App() {
@@ -23,19 +24,13 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [trashOpen, setTrashOpen] = useState(false)
   const { fetchCategories, categories } = useCategoryStore()
-  const { addTodo, todos } = useTodoStore()
+  const { todos } = useTodoStore()
   const { s3Config, syncEnabled, screenshotShortcut } = useSettingsStore()
+  const { queue, openQueue } = useScreenshotQueueStore()
   const { initShortcut } = useShortcut()
-
-  const {
-    imageData,
-    extractedTodos,
-    isExtracting,
-    error: screenshotError,
-    handleScreenshot,
-    clearScreenshot,
-  } = useScreenshot()
+  const { handleScreenshot } = useScreenshot()
 
   useEffect(() => {
     const init = async () => {
@@ -93,26 +88,6 @@ function App() {
     return cleanup || undefined
   }, [initialized, syncEnabled, s3Config, todos, categories])
 
-  const handleConfirmTodos = async (todos: ExtractedTodo[]) => {
-    try {
-      for (const todo of todos) {
-        await addTodo({
-          title: todo.title,
-          description: todo.description,
-          completed: false,
-          priority: todo.priority,
-          tags: todo.tags || [],
-          dueDate: todo.dueDate ? new Date(todo.dueDate) : undefined,
-        })
-      }
-      setToastMessage(`成功添加 ${todos.length} 个待办事项`)
-      clearScreenshot()
-    } catch (error) {
-      console.error('添加待办失败:', error)
-      setToastMessage('添加待办失败')
-    }
-  }
-
   if (error) {
     return (
       <div className="min-h-screen bg-bg-primary flex items-center justify-center">
@@ -158,6 +133,25 @@ function App() {
             >
               <Camera size={20} className="text-text-secondary" />
             </button>
+            {queue.length > 0 && (
+              <button
+                onClick={openQueue}
+                className="p-2 hover:bg-gray-100 rounded-md transition-colors relative"
+                title="截图队列"
+              >
+                <Image size={20} className="text-text-secondary" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-xs rounded-full flex items-center justify-center">
+                  {queue.length}
+                </span>
+              </button>
+            )}
+            <button
+              onClick={() => setTrashOpen(true)}
+              className="p-2 hover:bg-gray-100 rounded-md transition-colors relative"
+              title="回收站"
+            >
+              <Trash2 size={20} className="text-text-secondary" />
+            </button>
             <button
               onClick={() => setSettingsOpen(true)}
               className="p-2 hover:bg-gray-100 rounded-md transition-colors"
@@ -201,16 +195,8 @@ function App() {
         </main>
       </div>
 
-      {/* Screenshot Overlay */}
-      <ScreenshotOverlay
-        isOpen={!!imageData}
-        imageData={imageData}
-        extractedTodos={extractedTodos}
-        isExtracting={isExtracting}
-        error={screenshotError}
-        onClose={clearScreenshot}
-        onConfirm={handleConfirmTodos}
-      />
+      {/* Screenshot Queue Panel */}
+      <ScreenshotQueuePanel />
 
       {/* Toast Notifications */}
       {toastMessage && (
@@ -226,6 +212,12 @@ function App() {
       <SettingsPage
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
+      />
+
+      {/* Trash Page */}
+      <TrashPage
+        isOpen={trashOpen}
+        onClose={() => setTrashOpen(false)}
       />
     </div>
   )

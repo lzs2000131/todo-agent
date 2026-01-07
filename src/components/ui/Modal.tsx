@@ -35,12 +35,12 @@ export function Modal({ isOpen, onClose, title, children, footer, size = 'md' }:
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black bg-opacity-50"
+        className="absolute inset-0 bg-black/50 z-0"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className={clsx('relative bg-white rounded-lg shadow-xl w-full mx-4', sizes[size])}>
+      <div className={clsx('relative z-10 bg-white rounded-lg shadow-xl w-full mx-4', sizes[size])}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-semibold text-text-primary">{title}</h2>

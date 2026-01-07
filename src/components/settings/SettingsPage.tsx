@@ -14,12 +14,30 @@ interface SettingsPageProps {
 }
 
 export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
-  const { openaiApiKey, openaiBaseUrl, openaiModel, s3Config, updateSettings, syncEnabled, screenshotShortcut } = useSettingsStore();
+  const {
+    openaiApiKey,
+    openaiBaseUrl,
+    openaiModel,
+    openaiCustomPrompt,
+    openaiCustomHeaders,
+    openaiCustomBody,
+    s3Config,
+    updateSettings,
+    syncEnabled,
+    screenshotShortcut,
+  } = useSettingsStore();
   const { registerShortcut } = useShortcut();
 
   const [localApiKey, setLocalApiKey] = useState(openaiApiKey || '');
   const [localBaseUrl, setLocalBaseUrl] = useState(openaiBaseUrl || 'https://api.openai.com/v1');
   const [localModel, setLocalModel] = useState(openaiModel || 'gpt-4o-mini');
+  const [localCustomPrompt, setLocalCustomPrompt] = useState(openaiCustomPrompt || '');
+  const [localCustomHeaders, setLocalCustomHeaders] = useState(
+    openaiCustomHeaders ? JSON.stringify(openaiCustomHeaders, null, 2) : ''
+  );
+  const [localCustomBody, setLocalCustomBody] = useState(
+    openaiCustomBody ? JSON.stringify(openaiCustomBody, null, 2) : ''
+  );
   const [localShortcut, setLocalShortcut] = useState(screenshotShortcut || 'CmdOrCtrl+Shift+E');
   const [showApiKey, setShowApiKey] = useState(false);
   const [shortcutError, setShortcutError] = useState('');
@@ -54,10 +72,35 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
       }
     }
 
+    // 解析 JSON 配置
+    let parsedHeaders: Record<string, string> | undefined;
+    let parsedBody: Record<string, unknown> | undefined;
+
+    try {
+      if (localCustomHeaders.trim()) {
+        parsedHeaders = JSON.parse(localCustomHeaders);
+      }
+    } catch {
+      setSaveMessage('自定义 Headers JSON 格式错误');
+      return;
+    }
+
+    try {
+      if (localCustomBody.trim()) {
+        parsedBody = JSON.parse(localCustomBody);
+      }
+    } catch {
+      setSaveMessage('自定义 Body JSON 格式错误');
+      return;
+    }
+
     updateSettings({
       openaiApiKey: localApiKey.trim() || undefined,
       openaiBaseUrl: localBaseUrl.trim() || 'https://api.openai.com/v1',
       openaiModel: localModel.trim() || 'gpt-4o-mini',
+      openaiCustomPrompt: localCustomPrompt.trim() || undefined,
+      openaiCustomHeaders: parsedHeaders,
+      openaiCustomBody: parsedBody,
       screenshotShortcut: localShortcut,
       s3Config: (s3Bucket && s3Region && s3AccessKeyId && s3SecretKey) ? {
         bucket: s3Bucket.trim(),
@@ -176,6 +219,54 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
                   <p className="text-xs text-gray-500">
                     获取 API Key: <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">platform.openai.com</a>
                   </p>
+
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      自定义提示词
+                    </label>
+                    <textarea
+                      value={localCustomPrompt}
+                      onChange={(e) => setLocalCustomPrompt(e.target.value)}
+                      placeholder={`例如: 所有待办默认设为高优先级\n工作相关的事项标记为"工作"分类`}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      rows={3}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      定义你的待办创建偏好，AI 会根据这些规则生成待办
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      自定义 Headers (JSON)
+                    </label>
+                    <textarea
+                      value={localCustomHeaders}
+                      onChange={(e) => setLocalCustomHeaders(e.target.value)}
+                      placeholder='{"X-Custom-Header": "value"}'
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      rows={2}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      添加自定义 HTTP Headers，留空则不添加
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      自定义 Body (JSON)
+                    </label>
+                    <textarea
+                      value={localCustomBody}
+                      onChange={(e) => setLocalCustomBody(e.target.value)}
+                      placeholder='{"temperature": 0.7}'
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      rows={2}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      覆盖默认请求参数，如 temperature、top_p 等
+                    </p>
+                  </div>
                 </div>
               </section>
 

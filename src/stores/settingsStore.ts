@@ -13,6 +13,9 @@ const defaultSettings: Settings = {
   syncEnabled: false,
   openaiBaseUrl: 'https://api.openai.com/v1',
   openaiModel: 'gpt-4o-mini',
+  openaiCustomPrompt: '',
+  openaiCustomHeaders: {},
+  openaiCustomBody: {},
 }
 
 export const useSettingsStore = create<SettingsState>()(

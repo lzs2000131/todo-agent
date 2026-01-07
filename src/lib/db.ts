@@ -26,10 +26,31 @@ export async function initDatabase() {
         tags TEXT,
         due_date TEXT,
         reminder TEXT,
+        screenshot TEXT,
+        sort_order INTEGER DEFAULT 0,
         created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
+        updated_at TEXT NOT NULL,
+        deleted_at TEXT
       )
     `)
+
+    // 迁移：为已存在的表添加新字段
+    const migrations = [
+      { column: 'deleted_at', type: 'TEXT' },
+      { column: 'screenshot', type: 'TEXT' },
+      { column: 'sort_order', type: 'INTEGER DEFAULT 0' },
+      { column: 'attachments', type: 'TEXT' },
+    ]
+
+    for (const migration of migrations) {
+      try {
+        await db.execute(`ALTER TABLE todos ADD COLUMN ${migration.column} ${migration.type}`)
+        console.log(`已添加 ${migration.column} 字段`)
+      } catch (error) {
+        // 字段可能已存在，忽略错误
+        console.log(`${migration.column} 字段已存在或添加失败`)
+      }
+    }
 
     // 创建分类表
     console.log('创建分类表...')
