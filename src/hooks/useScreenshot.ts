@@ -56,11 +56,14 @@ export function useScreenshot() {
 
   // 监听全局快捷键触发的截图事件
   useEffect(() => {
+    console.log('注册 trigger-screenshot 事件监听器');
     const unlistenPromise = listen('trigger-screenshot', () => {
+      console.log('收到 trigger-screenshot 事件');
       handleScreenshot();
     });
 
     return () => {
+      console.log('取消 trigger-screenshot 事件监听器');
       unlistenPromise.then((fn) => fn());
     };
   }, [handleScreenshot]);

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useCategoryStore } from '@/stores/categoryStore'
 import { Input, Button, Modal } from '@/components/ui'
+import { CATEGORY_ICONS, CategoryIcon } from './CategoryIcon'
 
 const PRESET_COLORS = [
   '#6366F1', // 靛蓝
@@ -12,7 +13,7 @@ const PRESET_COLORS = [
   '#EC4899', // 粉色
 ]
 
-const PRESET_ICONS = ['📁', '💼', '🏠', '📚', '🎯', '💡', '🎨', '🎮']
+const PRESET_ICONS = Object.keys(CATEGORY_ICONS)
 
 export function CategoryForm() {
   const [isOpen, setIsOpen] = useState(false)
@@ -65,13 +66,13 @@ export function CategoryForm() {
                   key={i}
                   type="button"
                   onClick={() => setIcon(i)}
-                  className={`p-2 text-xl rounded-md border-2 transition-colors ${
+                  className={`p-2 flex items-center justify-center rounded-md border-2 transition-colors ${
                     icon === i
-                      ? 'border-primary bg-primary/10'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-500'
                   }`}
                 >
-                  {i}
+                  <CategoryIcon name={i} size={20} />
                 </button>
               ))}
             </div>

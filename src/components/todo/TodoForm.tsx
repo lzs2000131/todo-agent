@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import type { Todo } from '@/types'
 import { useTodoStore } from '@/stores/todoStore'
 import { useCategoryStore } from '@/stores/categoryStore'
-import { Input, Button, Modal } from '@/components/ui'
+import { Input, Button, Modal, Select, DatePicker } from '@/components/ui'
+import { CategoryIcon } from '../category/CategoryIcon'
 
 interface TodoFormProps {
   todo?: Todo
@@ -17,9 +18,7 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
   const [description, setDescription] = useState(todo?.description || '')
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>(todo?.priority || 'medium')
   const [categoryId, setCategoryId] = useState(todo?.categoryId || '')
-  const [dueDate, setDueDate] = useState(
-    todo?.dueDate ? todo.dueDate.toISOString().split('T')[0] : ''
-  )
+  const [dueDate, setDueDate] = useState<Date | undefined>(todo?.dueDate)
 
   const { addTodo, updateTodo } = useTodoStore()
   const { categories } = useCategoryStore()
@@ -36,7 +35,7 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
       priority,
       categoryId: categoryId || undefined,
       tags: [],
-      dueDate: dueDate ? new Date(dueDate) : undefined,
+      dueDate: dueDate,
     }
 
     if (todo) {
@@ -48,7 +47,7 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
       setDescription('')
       setPriority('medium')
       setCategoryId('')
-      setDueDate('')
+      setDueDate(undefined)
       setIsOpen(false)
     }
   }
@@ -58,88 +57,86 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
     onClose?.()
   }
 
+  const priorityOptions = [
+    { value: 'low', label: '低' },
+    { value: 'medium', label: '中' },
+    { value: 'high', label: '高' },
+  ]
+
+  const categoryOptions = [
+    { value: '', label: '无分类' },
+    ...categories.map(cat => ({
+      value: cat.id,
+      label: cat.name,
+      icon: <CategoryIcon name={cat.icon} size={16} style={{ color: cat.color }} />
+    }))
+  ]
+
+  const renderFormContent = () => (
+    <motion.form
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      onSubmit={handleSubmit}
+      className="space-y-4"
+    >
+      <Input
+        label="标题"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="输入待办事项..."
+        required
+        autoFocus={!todo}
+      />
+
+      <div>
+        <label className="block text-sm font-medium text-text-primary mb-1">
+          描述
+        </label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="添加描述..."
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          rows={3}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <Select
+          label="优先级"
+          value={priority}
+          onChange={(val) => setPriority(val as any)}
+          options={priorityOptions}
+        />
+
+        <Select
+          label="分类"
+          value={categoryId}
+          onChange={setCategoryId}
+          options={categoryOptions}
+        />
+      </div>
+
+      <DatePicker
+        label="截止日期"
+        value={dueDate}
+        onChange={setDueDate}
+      />
+
+      <div className="flex justify-end gap-2 pt-4">
+        <Button type="button" variant="ghost" onClick={handleClose}>
+          取消
+        </Button>
+        <Button type="submit">
+          {todo ? '更新' : '添加待办'}
+        </Button>
+      </div>
+    </motion.form>
+  )
+
   if (todo) {
-    return (
-      <motion.form
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        onSubmit={handleSubmit}
-        className="space-y-4"
-      >
-        <Input
-          label="标题"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="输入待办事项..."
-          required
-        />
-
-        <div>
-          <label className="block text-sm font-medium text-text-primary mb-1">
-            描述
-          </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="添加描述..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            rows={3}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">
-              优先级
-            </label>
-            <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as any)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="low">低</option>
-              <option value="medium">中</option>
-              <option value="high">高</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">
-              分类
-            </label>
-            <select
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="">无分类</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.icon} {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <Input
-          label="截止日期"
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-        />
-
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="ghost" onClick={handleClose}>
-            取消
-          </Button>
-          <Button type="submit">
-            {todo ? '更新' : '添加'}
-          </Button>
-        </div>
-      </motion.form>
-    )
+    return renderFormContent()
   }
 
   return (
@@ -159,88 +156,9 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
           <Modal
             isOpen={isOpen}
             onClose={handleClose}
-            title={todo ? '编辑待办' : '添加待办'}
+            title="添加待办"
           >
-            <motion.form
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              onSubmit={handleSubmit}
-              className="space-y-4"
-            >
-              <Input
-                label="标题"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="输入待办事项..."
-                required
-                autoFocus
-              />
-
-              <div>
-                <label className="block text-sm font-medium text-text-primary mb-1">
-                  描述
-                </label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="添加描述..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-text-primary mb-1">
-                    优先级
-                  </label>
-                  <select
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value as any)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="low">低</option>
-                    <option value="medium">中</option>
-                    <option value="high">高</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-primary mb-1">
-                    分类
-                  </label>
-                  <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="">无分类</option>
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.icon} {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <Input
-                label="截止日期"
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-
-              <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="ghost" onClick={handleClose}>
-                  取消
-                </Button>
-                <Button type="submit">
-                  添加待办
-                </Button>
-              </div>
-            </motion.form>
+            {renderFormContent()}
           </Modal>
         )}
       </AnimatePresence>

@@ -57,10 +57,14 @@ function App() {
     init()
   }, [fetchCategories])
 
-  // 初始化快捷键
+  // 初始化快捷键 - 延迟执行确保 zustand persist 已恢复状态
   useEffect(() => {
     if (initialized) {
-      initShortcut()
+      // 等待一小段时间确保 zustand persist 已从 localStorage 恢复状态
+      const timer = setTimeout(() => {
+        initShortcut()
+      }, 100)
+      return () => clearTimeout(timer)
     }
   }, [initialized, initShortcut])
 

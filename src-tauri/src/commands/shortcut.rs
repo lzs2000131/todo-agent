@@ -45,33 +45,38 @@ pub async fn register_shortcut(app: AppHandle, shortcut: String) -> Result<bool,
     // 解析新快捷键
     let sc = parse_shortcut(&shortcut)?;
 
-    // 尝试注册新快捷键
-    match app.global_shortcut().register(sc) {
-        Ok(_) => {
-            // 注册成功,设置事件监听
-            let handle = app.app_handle().clone();
-            app.global_shortcut().on_shortcut(sc, move |_app, _shortcut, event| {
-                if event.state == ShortcutState::Pressed {
-                    let _ = handle.emit("trigger-screenshot", ());
-                }
-            }).map_err(|e| format!("Failed to register handler: {}", e))?;
+    // 克隆 app handle 用于事件回调
+    let handle = app.app_handle().clone();
 
+    // 使用带回调的 register 方法一次性注册快捷键和事件处理器
+    match app.global_shortcut().on_shortcut(sc, move |_app, _shortcut, event| {
+        if event.state == ShortcutState::Pressed {
+            println!("快捷键触发: {:?}", _shortcut);
+            // 使用 emit_all 发送给所有窗口，确保事件能被接收
+            if let Err(e) = handle.emit("trigger-screenshot", ()) {
+                eprintln!("发送事件失败: {}", e);
+            } else {
+                println!("trigger-screenshot 事件已发送");
+            }
+        }
+    }) {
+        Ok(_) => {
             // 保存当前快捷键
-            *CURRENT_SHORTCUT.lock().unwrap() = Some(shortcut);
+            *CURRENT_SHORTCUT.lock().unwrap() = Some(shortcut.clone());
+            println!("快捷键注册成功: {}", shortcut);
             Ok(true)
         }
         Err(e) => {
             // 注册失败,尝试恢复旧的快捷键
             if let Some(ref old) = old_shortcut {
                 if let Ok(old_sc) = parse_shortcut(old) {
-                    if app.global_shortcut().register(old_sc).is_ok() {
-                        let handle = app.app_handle().clone();
-                        let _ = app.global_shortcut().on_shortcut(old_sc, move |_app, _shortcut, event| {
-                            if event.state == ShortcutState::Pressed {
-                                let _ = handle.emit("trigger-screenshot", ());
-                            }
-                        });
-                    }
+                    let handle = app.app_handle().clone();
+                    let _ = app.global_shortcut().on_shortcut(old_sc, move |_app, _shortcut, event| {
+                        if event.state == ShortcutState::Pressed {
+                            let _ = handle.emit("trigger-screenshot", ());
+                        }
+                    });
+                    *CURRENT_SHORTCUT.lock().unwrap() = Some(old.clone());
                 }
             }
             Err(format!("快捷键格式无效或已被占用: {}", e))

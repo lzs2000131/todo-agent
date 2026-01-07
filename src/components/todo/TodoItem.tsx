@@ -8,6 +8,7 @@ import { useTodoStore } from '@/stores/todoStore'
 import { useCategoryStore } from '@/stores/categoryStore'
 import { Modal } from '@/components/ui'
 import { TodoForm } from './TodoForm'
+import { CategoryIcon } from '../category/CategoryIcon'
 
 interface TodoItemProps {
   todo: Todo
@@ -110,7 +111,8 @@ export function TodoItem({ todo }: TodoItemProps) {
                   className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs text-white"
                   style={{ backgroundColor: category.color }}
                 >
-                  {category.icon} {category.name}
+                  <CategoryIcon name={category.icon} size={12} />
+                  {category.name}
                 </motion.span>
               )}
 
