@@ -1,26 +1,17 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Key, Cloud, Save, Eye, EyeOff, Keyboard } from 'lucide-react';
+import { X, Key, Cloud, Save, Eye, EyeOff } from 'lucide-react';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useShortcut } from '@/hooks/useShortcut';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ShortcutInput } from '@/components/ui/ShortcutInput';
 import clsx from 'clsx';
 
 interface SettingsPageProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-// 快捷键选项
-const SHORTCUT_OPTIONS = [
-  { value: 'CmdOrCtrl+Shift+A', label: 'Cmd+Shift+A' },
-  { value: 'CmdOrCtrl+Shift+E', label: 'Cmd+Shift+E' },
-  { value: 'CmdOrCtrl+Shift+T', label: 'Cmd+Shift+T' },
-  { value: 'CmdOrCtrl+Shift+S', label: 'Cmd+Shift+S' },
-  { value: 'CmdOrCtrl+Shift+D', label: 'Cmd+Shift+D' },
-  { value: 'CmdOrCtrl+Shift+X', label: 'Cmd+Shift+X' },
-];
 
 export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
   const { openaiApiKey, openaiBaseUrl, openaiModel, s3Config, updateSettings, syncEnabled, screenshotShortcut } = useSettingsStore();
@@ -122,38 +113,13 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
             <div className="space-y-6">
               {/* 截图快捷键 */}
               <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Keyboard className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-medium text-gray-900">截图快捷键</h3>
-                </div>
-                <p className="text-sm text-gray-600 mb-3">
-                  设置全局快捷键,快速触发截图识别功能
-                </p>
-
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-2">
-                    {SHORTCUT_OPTIONS.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => setLocalShortcut(option.value)}
-                        className={clsx(
-                          'px-4 py-2 rounded-lg border-2 transition-all font-mono text-sm',
-                          localShortcut === option.value
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
-                        )}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                  {shortcutError && (
-                    <p className="text-sm text-red-600">{shortcutError}</p>
-                  )}
-                  <p className="text-xs text-gray-500">
-                    当前快捷键: <code className="bg-gray-100 px-1 rounded">{localShortcut.replace('CmdOrCtrl', 'Cmd')}</code>
-                  </p>
-                </div>
+                <ShortcutInput
+                  value={localShortcut}
+                  onChange={setLocalShortcut}
+                />
+                {shortcutError && (
+                  <p className="text-sm text-red-600 mt-2">{shortcutError}</p>
+                )}
               </section>
 
               {/* Divider */}
