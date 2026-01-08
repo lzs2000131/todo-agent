@@ -31,3 +31,4 @@ dist-ssr
 .env
 .env.local
 settings.json
+src-tauri/gen/schemas/
