@@ -27,10 +27,37 @@ function App() {
   const [trashOpen, setTrashOpen] = useState(false)
   const { fetchCategories, categories } = useCategoryStore()
   const { todos } = useTodoStore()
-  const { ossConfig, syncEnabled, screenshotShortcut } = useSettingsStore()
+  const { ossConfig, syncEnabled, screenshotShortcut, theme } = useSettingsStore()
   const { queue, openQueue } = useScreenshotQueueStore()
   const { initShortcut } = useShortcut()
   const { handleScreenshot } = useScreenshot()
+
+  // Theme handling
+  useEffect(() => {
+    const root = window.document.documentElement
+    
+    const applyTheme = (t: 'light' | 'dark' | 'system') => {
+      root.classList.remove('light', 'dark')
+      
+      if (t === 'system') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+        root.classList.add(systemTheme)
+      } else {
+        root.classList.add(t)
+      }
+    }
+
+    applyTheme(theme)
+
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const handleChange = () => applyTheme('system')
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
+    }
+  }, [theme])
 
   useEffect(() => {
     const init = async () => {
@@ -119,7 +146,7 @@ function App() {
   return (
     <div className="min-h-screen bg-bg-primary">
       {/* Header */}
-      <header className="bg-bg-card border-b border-gray-200 px-6 py-4">
+      <header className="bg-bg-card border-b border-gray-200 dark:border-gray-700 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-primary">Todo Agent</h1>
@@ -128,7 +155,7 @@ function App() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleScreenshot}
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
               title={`截图识别 (${screenshotShortcut?.replace('CmdOrCtrl', 'Cmd') || 'Cmd+Shift+E'})`}
             >
               <Camera size={20} className="text-text-secondary" />
@@ -136,7 +163,7 @@ function App() {
             {queue.length > 0 && (
               <button
                 onClick={openQueue}
-                className="p-2 hover:bg-gray-100 rounded-md transition-colors relative"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors relative"
                 title="截图队列"
               >
                 <Image size={20} className="text-text-secondary" />
@@ -147,14 +174,14 @@ function App() {
             )}
             <button
               onClick={() => setTrashOpen(true)}
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors relative"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors relative"
               title="回收站"
             >
               <Trash2 size={20} className="text-text-secondary" />
             </button>
             <button
               onClick={() => setSettingsOpen(true)}
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
               title="设置"
             >
               <Settings size={20} className="text-text-secondary" />
@@ -166,7 +193,7 @@ function App() {
       {/* Main Content */}
       <div className="flex h-[calc(100vh-73px)]">
         {/* Sidebar */}
-        <aside className="w-64 bg-bg-card border-r border-gray-200 p-4 overflow-y-auto">
+        <aside className="w-64 bg-bg-card border-r border-gray-200 dark:border-gray-700 p-4 overflow-y-auto">
           <div className="space-y-6">
             {/* Filters */}
             <div>

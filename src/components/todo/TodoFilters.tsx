@@ -33,7 +33,7 @@ export function TodoFilters({ onFilterChange }: TodoFiltersProps) {
           className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition-colors ${
             filter === id
               ? 'bg-primary text-white'
-              : 'text-text-secondary hover:bg-gray-100'
+              : 'text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800'
           }`}
         >
           <Icon size={18} />

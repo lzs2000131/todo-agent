@@ -93,22 +93,22 @@ export function ScreenshotQueuePanel() {
         initial={{ opacity: 0, x: 300 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 300 }}
-        className="fixed right-4 top-20 bottom-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col z-50"
+        className="fixed right-4 top-20 bottom-4 w-96 bg-bg-card rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col z-50"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
             <Image className="w-5 h-5 text-primary" />
-            <h3 className="font-semibold text-gray-900">截图识别队列</h3>
+            <h3 className="font-semibold text-text-primary">截图识别队列</h3>
             <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
               {queue.length} 张截图
             </span>
           </div>
           <button
             onClick={closeQueue}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
-            <X className="w-4 h-4 text-gray-500" />
+            <X className="w-4 h-4 text-text-secondary" />
           </button>
         </div>
 
@@ -117,25 +117,25 @@ export function ScreenshotQueuePanel() {
           {queue.map((item, index) => (
             <div
               key={item.id}
-              className="bg-gray-50 rounded-xl p-3 space-y-3"
+              className="bg-gray-50 dark:bg-slate-800 rounded-xl p-3 space-y-3"
             >
               {/* Screenshot Preview */}
               <div className="flex items-start gap-3">
                 <img
                   src={`data:image/png;base64,${uint8ArrayToBase64(item.imageData)}`}
                   alt={`截图 ${index + 1}`}
-                  className="w-20 h-14 object-cover rounded-lg border border-gray-200"
+                  className="w-20 h-14 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-text-primary">
                       截图 {index + 1}
                     </span>
                     <button
                       onClick={() => removeFromQueue(item.id)}
-                      className="p-1 hover:bg-gray-200 rounded transition-colors"
+                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                     >
-                      <Trash2 className="w-3.5 h-3.5 text-gray-400" />
+                      <Trash2 className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
                     </button>
                   </div>
                   {item.isExtracting ? (
@@ -149,7 +149,7 @@ export function ScreenshotQueuePanel() {
                       {item.error}
                     </div>
                   ) : (
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-text-secondary mt-1">
                       识别到 {item.extractedTodos.length} 个待办
                     </div>
                   )}
@@ -162,14 +162,14 @@ export function ScreenshotQueuePanel() {
                   {item.extractedTodos.map((todo, todoIndex) => (
                     <div
                       key={todoIndex}
-                      className="flex items-start gap-2 bg-white p-2 rounded-lg border border-gray-100"
+                      className="flex items-start gap-2 bg-bg-card p-2 rounded-lg border border-gray-100 dark:border-gray-700"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm text-gray-900 font-medium truncate">
+                        <div className="text-sm text-text-primary font-medium truncate">
                           {todo.title}
                         </div>
                         {todo.description && (
-                          <div className="text-xs text-gray-500 truncate mt-0.5">
+                          <div className="text-xs text-text-secondary truncate mt-0.5">
                             {todo.description}
                           </div>
                         )}
@@ -177,16 +177,16 @@ export function ScreenshotQueuePanel() {
                           <span
                             className={`text-xs px-1.5 py-0.5 rounded ${
                               todo.priority === 'high'
-                                ? 'bg-red-100 text-red-700'
+                                ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                                 : todo.priority === 'medium'
-                                ? 'bg-yellow-100 text-yellow-700'
-                                : 'bg-gray-100 text-gray-700'
+                                ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                             }`}
                           >
                             {todo.priority === 'high' ? '高' : todo.priority === 'medium' ? '中' : '低'}
                           </span>
                           {todo.dueDate && (
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-text-secondary">
                               {todo.dueDate}
                             </span>
                           )}
@@ -208,8 +208,8 @@ export function ScreenshotQueuePanel() {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200 space-y-2">
-          <div className="text-xs text-gray-500 text-center">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+          <div className="text-xs text-text-secondary text-center">
             共 {totalTodos} 个待办事项待确认
           </div>
           <div className="flex gap-2">

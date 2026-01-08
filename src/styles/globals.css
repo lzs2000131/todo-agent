@@ -14,6 +14,15 @@
   --text-secondary: #64748B;
 }
 
+.dark {
+  --primary: #818CF8;
+  --primary-light: #A5B4FC;
+  --bg-primary: #0f172a;
+  --bg-card: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+}
+
 html, body {
   height: 100%;
   overflow: hidden;

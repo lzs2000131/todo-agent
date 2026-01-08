@@ -40,7 +40,7 @@ export function TodoItemDragOverlay({ todo }: TodoItemProps) {
         </div>
         <div
           className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-            todo.completed ? 'bg-success border-success' : 'border-gray-300'
+            todo.completed ? 'bg-success border-success' : 'border-gray-300 dark:border-gray-600'
           }`}
         >
           {todo.completed && (
@@ -130,10 +130,10 @@ export function TodoItem({ todo }: TodoItemProps) {
           <button
             {...attributes}
             {...listeners}
-            className="mt-1 p-1 cursor-grab active:cursor-grabbing hover:bg-gray-100 rounded transition-colors"
+            className="mt-1 p-1 cursor-grab active:cursor-grabbing hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
             title="拖拽排序"
           >
-            <GripVertical size={16} className="text-gray-400" />
+            <GripVertical size={16} className="text-gray-400 dark:text-gray-600" />
           </button>
 
           {/* Checkbox */}
@@ -142,7 +142,7 @@ export function TodoItem({ todo }: TodoItemProps) {
             className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
               todo.completed
                 ? 'bg-success border-success'
-                : 'border-gray-300 hover:border-primary'
+                : 'border-gray-300 dark:border-gray-600 hover:border-primary'
             }`}
           >
             {todo.completed && (
@@ -226,14 +226,14 @@ export function TodoItem({ todo }: TodoItemProps) {
           <div className="flex items-center gap-1">
             <button
               onClick={() => setIsEditOpen(true)}
-              className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
               title="编辑"
             >
               <Edit2 size={16} className="text-text-secondary" />
             </button>
             <button
               onClick={() => deleteTodo(todo.id)}
-              className="p-1.5 hover:bg-red-50 rounded-md transition-colors"
+              className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
               title="删除"
             >
               <Trash2 size={16} className="text-danger" />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Key, Cloud, Save, Eye, EyeOff } from 'lucide-react';
+import { X, Key, Cloud, Save, Eye, EyeOff, Palette, Sun, Moon, Monitor } from 'lucide-react';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useShortcut } from '@/hooks/useShortcut';
 import { Button } from '@/components/ui/Button';
@@ -25,6 +25,7 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
     updateSettings,
     syncEnabled,
     screenshotShortcut,
+    theme,
   } = useSettingsStore();
   const { registerShortcut } = useShortcut();
 
@@ -130,31 +131,82 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden"
+          className="bg-bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                 <Key className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">设置</h2>
-                <p className="text-sm text-gray-500">配置 API 密钥和同步选项</p>
+                <h2 className="text-xl font-semibold text-text-primary">设置</h2>
+                <p className="text-sm text-text-secondary">配置 API 密钥和同步选项</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800 rounded-lg transition-colors"
             >
-              <X className="w-5 h-5 text-gray-500" />
+              <X className="w-5 h-5 text-text-secondary dark:text-gray-400" />
             </button>
           </div>
 
           {/* Content */}
           <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
             <div className="space-y-6">
+              {/* 外观设置 */}
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <Palette className="w-5 h-5 text-primary" />
+                  <h3 className="text-lg font-medium text-text-primary">外观</h3>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-3">
+                  <button
+                    onClick={() => updateSettings({ theme: 'light' })}
+                    className={clsx(
+                      'flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all',
+                      theme === 'light' 
+                        ? 'border-primary bg-primary/5 text-primary' 
+                        : 'border-gray-200 dark:border-gray-700 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600 text-text-secondary dark:text-gray-400'
+                    )}
+                  >
+                    <Sun className="w-6 h-6 mb-2" />
+                    <span className="text-sm">浅色</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => updateSettings({ theme: 'dark' })}
+                    className={clsx(
+                      'flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all',
+                      theme === 'dark' 
+                        ? 'border-primary bg-primary/5 text-primary' 
+                        : 'border-gray-200 dark:border-gray-700 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600 text-text-secondary dark:text-gray-400'
+                    )}
+                  >
+                    <Moon className="w-6 h-6 mb-2" />
+                    <span className="text-sm">深色</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => updateSettings({ theme: 'system' })}
+                    className={clsx(
+                      'flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all',
+                      theme === 'system' 
+                        ? 'border-primary bg-primary/5 text-primary' 
+                        : 'border-gray-200 dark:border-gray-700 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600 text-text-secondary dark:text-gray-400'
+                    )}
+                  >
+                    <Monitor className="w-6 h-6 mb-2" />
+                    <span className="text-sm">跟随系统</span>
+                  </button>
+                </div>
+              </section>
+
+              {/* Divider */}
+              <hr className="border-gray-200 dark:border-gray-700 dark:border-gray-700" />
               {/* 截图快捷键 */}
               <section>
                 <ShortcutInput
@@ -167,15 +219,15 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
               </section>
 
               {/* Divider */}
-              <hr className="border-gray-200" />
+              <hr className="border-gray-200 dark:border-gray-700" />
 
               {/* OpenAI API Key */}
               <section>
                 <div className="flex items-center gap-2 mb-3">
                   <Key className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-medium text-gray-900">OpenAI API</h3>
+                  <h3 className="text-lg font-medium text-text-primary">OpenAI API</h3>
                 </div>
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm text-text-secondary mb-3">
                   用于截图识别功能,从截图中自动提取待办事项
                 </p>
 
@@ -186,8 +238,8 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
                     onChange={(e) => setLocalBaseUrl(e.target.value)}
                     placeholder="https://api.openai.com/v1"
                   />
-                  <p className="text-xs text-gray-500">
-                    可使用兼容 OpenAI API 的中转服务,如 <code className="bg-gray-100 px-1 rounded">https://api.openai.com/v1</code>
+                  <p className="text-xs text-text-secondary">
+                    可使用兼容 OpenAI API 的中转服务,如 <code className="bg-gray-100 dark:bg-slate-800 px-1 rounded">https://api.openai.com/v1</code>
                   </p>
 
                   <Input
@@ -196,8 +248,8 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
                     onChange={(e) => setLocalModel(e.target.value)}
                     placeholder="gpt-4o-mini"
                   />
-                  <p className="text-xs text-gray-500">
-                    常用模型: <code className="bg-gray-100 px-1 rounded">gpt-4o-mini</code>, <code className="bg-gray-100 px-1 rounded">gpt-4o</code>, <code className="bg-gray-100 px-1 rounded">gpt-4-vision-preview</code>
+                  <p className="text-xs text-text-secondary">
+                    常用模型: <code className="bg-gray-100 dark:bg-slate-800 px-1 rounded">gpt-4o-mini</code>, <code className="bg-gray-100 dark:bg-slate-800 px-1 rounded">gpt-4o</code>, <code className="bg-gray-100 dark:bg-slate-800 px-1 rounded">gpt-4-vision-preview</code>
                   </p>
 
                   <div className="relative">
@@ -212,59 +264,59 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
                     <button
                       type="button"
                       onClick={() => setShowApiKey(!showApiKey)}
-                      className="absolute right-3 top-8 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-8 text-gray-400 hover:text-text-secondary"
                     >
                       {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-text-secondary">
                     获取 API Key: <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">platform.openai.com</a>
                   </p>
 
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <label className="block text-sm font-medium text-text-primary mb-1">
                       自定义提示词
                     </label>
                     <textarea
                       value={localCustomPrompt}
                       onChange={(e) => setLocalCustomPrompt(e.target.value)}
                       placeholder={`例如: 所有待办默认设为高优先级\n工作相关的事项标记为"工作"分类`}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-primary bg-transparent dark:bg-slate-900 resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
                       rows={3}
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-text-secondary mt-1">
                       定义你的待办创建偏好，AI 会根据这些规则生成待办
                     </p>
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-text-primary mb-1">
                       自定义 Headers (JSON)
                     </label>
                     <textarea
                       value={localCustomHeaders}
                       onChange={(e) => setLocalCustomHeaders(e.target.value)}
                       placeholder='{"X-Custom-Header": "value"}'
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-primary bg-transparent dark:bg-slate-900 font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
                       rows={2}
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-text-secondary mt-1">
                       添加自定义 HTTP Headers，留空则不添加
                     </p>
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-text-primary mb-1">
                       自定义 Body (JSON)
                     </label>
                     <textarea
                       value={localCustomBody}
                       onChange={(e) => setLocalCustomBody(e.target.value)}
                       placeholder='{"temperature": 0.7}'
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-primary bg-transparent dark:bg-slate-900 font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
                       rows={2}
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-text-secondary mt-1">
                       覆盖默认请求参数，如 temperature、top_p 等
                     </p>
                   </div>
@@ -272,15 +324,15 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
               </section>
 
               {/* Divider */}
-              <hr className="border-gray-200" />
+              <hr className="border-gray-200 dark:border-gray-700" />
 
               {/* OSS Configuration */}
               <section>
                 <div className="flex items-center gap-2 mb-3">
                   <Cloud className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-medium text-gray-900">OSS 云端同步</h3>
+                  <h3 className="text-lg font-medium text-text-primary">OSS 云端同步</h3>
                 </div>
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm text-text-secondary mb-3">
                   可选: 配置 OSS 以启用数据云端备份和多设备同步（支持阿里云 OSS、腾讯云 COS、MinIO、AWS S3 等 S3 兼容存储）
                 </p>
 
@@ -291,10 +343,10 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
                     onChange={(e) => setOssEndpoint(e.target.value)}
                     placeholder="https://oss-cn-hangzhou.aliyuncs.com"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    常用端点: 阿里云 <code className="bg-gray-100 px-1 rounded">https://oss-cn-hangzhou.aliyuncs.com</code>，
-                    腾讯云 <code className="bg-gray-100 px-1 rounded">https://cos.ap-guangzhou.myqcloud.com</code>，
-                    AWS <code className="bg-gray-100 px-1 rounded">https://s3.amazonaws.com</code>
+                  <p className="text-xs text-text-secondary mt-1">
+                    常用端点: 阿里云 <code className="bg-gray-100 dark:bg-slate-800 px-1 rounded">https://oss-cn-hangzhou.aliyuncs.com</code>，
+                    腾讯云 <code className="bg-gray-100 dark:bg-slate-800 px-1 rounded">https://cos.ap-guangzhou.myqcloud.com</code>，
+                    AWS <code className="bg-gray-100 dark:bg-slate-800 px-1 rounded">https://s3.amazonaws.com</code>
                   </p>
 
                   <Input
@@ -330,7 +382,7 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
                     <button
                       type="button"
                       onClick={() => setShowOssSecret(!showOssSecret)}
-                      className="absolute right-3 top-8 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-8 text-gray-400 hover:text-text-secondary"
                     >
                       {showOssSecret ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -339,10 +391,10 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
               </section>
 
               {/* Sync Toggle */}
-              <section className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <section className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-900/50 rounded-lg">
                 <div>
-                  <h4 className="font-medium text-gray-900">启用云端同步</h4>
-                  <p className="text-sm text-gray-600">自动备份数据到 OSS</p>
+                  <h4 className="font-medium text-text-primary">启用云端同步</h4>
+                  <p className="text-sm text-text-secondary">自动备份数据到 OSS</p>
                 </div>
                 <button
                   onClick={() => updateSettings({ syncEnabled: !syncEnabled })}
@@ -363,13 +415,13 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700 dark:border-gray-700 bg-gray-50 dark:bg-slate-900/50 dark:bg-slate-900/50">
             {saveMessage && (
-              <span className="text-sm text-green-600">{saveMessage}</span>
+              <span className="text-sm text-green-600 dark:text-green-400">{saveMessage}</span>
             )}
             {!saveMessage && <span />}
             <div className="flex gap-2">
-              <Button variant="ghost" onClick={onClose}>
+              <Button variant="ghost" onClick={onClose} className="text-text-secondary hover:text-text-primary hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-gray-800">
                 取消
               </Button>
               <Button onClick={handleSave}>

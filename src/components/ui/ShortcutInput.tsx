@@ -117,7 +117,7 @@ export function ShortcutInput({ value, onChange, className }: ShortcutInputProps
 
   return (
     <div className={clsx('space-y-2', className)}>
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-text-primary">
         截图快捷键
       </label>
       <div
@@ -129,7 +129,7 @@ export function ShortcutInput({ value, onChange, className }: ShortcutInputProps
           'flex items-center gap-3 px-4 py-3 rounded-lg border-2 cursor-pointer transition-all',
           isRecording
             ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-            : 'border-gray-200 hover:border-gray-300 bg-white'
+            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-slate-900'
         )}
       >
         <Keyboard className={clsx(
@@ -143,7 +143,7 @@ export function ShortcutInput({ value, onChange, className }: ShortcutInputProps
               {tempShortcut ? formatShortcut(tempShortcut) : '请按下快捷键组合...'}
             </span>
           ) : (
-            <span className="font-mono text-gray-900">
+            <span className="font-mono text-text-primary">
               {formatShortcut(displayValue)}
             </span>
           )}
@@ -153,12 +153,12 @@ export function ShortcutInput({ value, onChange, className }: ShortcutInputProps
           'text-xs px-2 py-1 rounded',
           isRecording
             ? 'bg-primary/10 text-primary'
-            : 'bg-gray-100 text-gray-500'
+            : 'bg-gray-100 dark:bg-slate-800 text-text-secondary'
         )}>
           {isRecording ? '录制中' : '点击录制'}
         </span>
       </div>
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-text-secondary">
         点击上方区域，然后按下想要设置的快捷键组合（需包含 ⌘/Ctrl）
       </p>
     </div>

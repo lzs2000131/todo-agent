@@ -197,7 +197,7 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="添加描述..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-text-primary bg-transparent dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary"
           rows={3}
         />
       </div>
@@ -238,7 +238,7 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
                 <img
                   src={`data:image/png;base64,${img.data}`}
                   alt={img.name}
-                  className="w-full h-16 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                  className="w-full h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                   onClick={() => setPreviewImage(img.data)}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
@@ -277,16 +277,16 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
             {allFiles.map((file) => (
               <div
                 key={file.id}
-                className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg border border-gray-200"
+                className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700"
               >
-                <FileText size={20} className="text-gray-500 flex-shrink-0" />
-                <span className="flex-1 text-sm text-gray-700 truncate" title={file.name}>
+                <FileText size={20} className="text-text-secondary flex-shrink-0" />
+                <span className="flex-1 text-sm text-text-primary truncate" title={file.name}>
                   {file.name}
                 </span>
                 <button
                   type="button"
                   onClick={() => downloadAttachment(file)}
-                  className="p-1 hover:bg-gray-200 rounded transition-colors"
+                  className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                   title="下载"
                 >
                   <Download size={14} className="text-primary" />
@@ -294,7 +294,7 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
                 <button
                   type="button"
                   onClick={() => removeAttachment(file.id)}
-                  className="p-1 hover:bg-gray-200 rounded transition-colors"
+                  className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                   title="删除"
                 >
                   <X size={14} className="text-red-500" />
@@ -315,7 +315,7 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-primary hover:text-primary transition-colors w-full justify-center"
+          className="flex items-center gap-2 px-3 py-2 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-secondary hover:border-primary hover:text-primary transition-colors w-full justify-center"
         >
           <Upload size={16} />
           <span>上传附件</span>
@@ -328,7 +328,7 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="mt-2 text-sm text-center text-green-600 bg-green-50 py-2 px-3 rounded-lg"
+              className="mt-2 text-sm text-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 py-2 px-3 rounded-lg"
             >
               {downloadMessage}
             </motion.div>
@@ -397,7 +397,7 @@ export function TodoForm({ todo, onClose }: TodoFormProps) {
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
         onClick={() => setIsOpen(true)}
-        className="w-full flex items-center gap-2 px-4 py-3 bg-bg-card rounded-lg border-2 border-dashed border-gray-300 hover:border-primary transition-colors text-text-secondary hover:text-primary"
+        className="w-full flex items-center gap-2 px-4 py-3 bg-bg-card rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-primary transition-colors text-text-secondary hover:text-primary"
       >
         <Plus size={20} />
         <span>添加新待办...</span>

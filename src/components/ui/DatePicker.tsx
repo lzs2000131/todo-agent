@@ -67,23 +67,23 @@ export function DatePicker({
 
   const renderHeader = () => {
     return (
-      <div className="flex items-center justify-between px-2 py-2 border-b border-gray-100">
+      <div className="flex items-center justify-between px-2 py-2 border-b border-gray-100 dark:border-gray-800">
         <button
           type="button"
           onClick={prevMonth}
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
         >
-          <ChevronLeft size={20} className="text-gray-600" />
+          <ChevronLeft size={20} className="text-text-secondary" />
         </button>
-        <span className="font-medium text-gray-700">
+        <span className="font-medium text-text-primary">
           {format(currentMonth, 'yyyy年 MMMM', { locale: zhCN })}
         </span>
         <button
           type="button"
           onClick={nextMonth}
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
         >
-          <ChevronRight size={20} className="text-gray-600" />
+          <ChevronRight size={20} className="text-text-secondary" />
         </button>
       </div>
     )
@@ -96,7 +96,7 @@ export function DatePicker({
 
     for (let i = 0; i < 7; i++) {
       days.push(
-        <div key={i} className="text-xs font-medium text-gray-400 text-center py-1">
+        <div key={i} className="text-xs font-medium text-text-secondary text-center py-1">
           {format(startDate, dateFormat, { locale: zhCN })}
         </div>
       )
@@ -134,7 +134,7 @@ export function DatePicker({
               }}
               className={cn(
                 "h-8 w-8 text-sm rounded-full flex items-center justify-center transition-colors relative",
-                !isCurrentMonth ? "text-gray-300 cursor-default" : "hover:bg-primary/10 text-gray-700",
+                !isCurrentMonth ? "text-gray-300 dark:text-gray-600 cursor-default" : "hover:bg-primary/10 text-text-primary",
                 isSelected && isCurrentMonth ? "bg-primary text-white hover:bg-primary" : "",
                 isDayToday && !isSelected && isCurrentMonth ? "border border-primary text-primary" : ""
               )}
@@ -162,9 +162,9 @@ export function DatePicker({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "w-full flex items-center justify-between px-3 py-2 border rounded-md bg-white text-left transition-colors",
+          "w-full flex items-center justify-between px-3 py-2 border rounded-md bg-bg-card text-left transition-colors text-text-primary",
           "focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent",
-          isOpen ? "border-primary ring-2 ring-primary ring-opacity-50" : "border-gray-300",
+          isOpen ? "border-primary ring-2 ring-primary ring-opacity-50" : "border-gray-300 dark:border-gray-600",
           "hover:border-primary/50"
         )}
       >
@@ -182,11 +182,11 @@ export function DatePicker({
             exit={{ opacity: 0, scale: 0.95, y: placement === 'bottom' ? -10 : 10 }}
             transition={{ duration: 0.15 }}
             className={cn(
-              "absolute z-50 p-3 bg-white border border-gray-200 rounded-lg shadow-xl w-[280px] left-0",
+              "absolute z-50 p-3 bg-bg-card border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl w-[280px] left-0",
               placement === 'bottom' ? "mt-1 top-full" : "mb-1 bottom-full"
             )}
           >
-             <div className="bg-white"> 
+             <div className="bg-bg-card"> 
                 {renderHeader()}
                 <div className="pt-2">
                     {renderDays()}

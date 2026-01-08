@@ -22,7 +22,7 @@ export function CategoryList() {
         {categories.map((category) => (
           <button
             key={category.id}
-            className="w-full flex items-center justify-between px-4 py-2 rounded-md text-text-secondary hover:bg-gray-100 transition-colors"
+            className="w-full flex items-center justify-between px-4 py-2 rounded-md text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             <div className="flex items-center gap-2">
               <CategoryIcon 
@@ -33,7 +33,7 @@ export function CategoryList() {
               />
               <span>{category.name}</span>
             </div>
-            <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full">
+            <span className="text-xs bg-gray-200 dark:bg-slate-700 text-text-primary px-2 py-0.5 rounded-full">
               {getCategoryCount(category.id)}
             </span>
           </button>

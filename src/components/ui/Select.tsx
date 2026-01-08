@@ -56,10 +56,10 @@ export function Select({
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={cn(
-          "w-full flex items-center justify-between px-3 py-2 border rounded-md bg-white text-left transition-colors",
+          "w-full flex items-center justify-between px-3 py-2 border rounded-md bg-bg-card text-left transition-colors",
           "focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent",
-          isOpen ? "border-primary ring-2 ring-primary ring-opacity-50" : "border-gray-300",
-          disabled ? "bg-gray-100 cursor-not-allowed opacity-50" : "hover:border-primary/50",
+          isOpen ? "border-primary ring-2 ring-primary ring-opacity-50" : "border-gray-300 dark:border-gray-600",
+          disabled ? "bg-gray-100 dark:bg-slate-800 cursor-not-allowed opacity-50" : "hover:border-primary/50",
           "text-text-primary"
         )}
         disabled={disabled}
@@ -78,7 +78,7 @@ export function Select({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto"
+            className="absolute z-50 w-full mt-1 bg-bg-card border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto"
           >
             <ul className="py-1">
               {options.map((option) => (
@@ -91,7 +91,7 @@ export function Select({
                     }}
                     className={cn(
                       "w-full flex items-center justify-between px-3 py-2 text-sm transition-colors",
-                      "hover:bg-primary/10 hover:text-primary",
+                      "hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary",
                       option.value === value ? "bg-primary/5 text-primary font-medium" : "text-text-primary"
                     )}
                   >

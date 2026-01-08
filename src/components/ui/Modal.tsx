@@ -40,13 +40,13 @@ export function Modal({ isOpen, onClose, title, children, footer, size = 'md' }:
       />
 
       {/* Modal */}
-      <div className={clsx('relative z-10 bg-white rounded-lg shadow-xl w-full mx-4', sizes[size])}>
+      <div className={clsx('relative z-10 bg-bg-card rounded-lg shadow-xl w-full mx-4', sizes[size])}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-text-primary">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-md transition-colors"
+            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
           >
             <X size={20} />
           </button>
@@ -59,7 +59,7 @@ export function Modal({ isOpen, onClose, title, children, footer, size = 'md' }:
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-2 p-4 border-t">
+          <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200 dark:border-gray-700">
             {footer}
           </div>
         )}

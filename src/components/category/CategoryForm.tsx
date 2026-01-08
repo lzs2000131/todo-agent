@@ -39,7 +39,7 @@ export function CategoryForm() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-text-secondary hover:bg-gray-100 rounded-md transition-colors"
+        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
       >
         <Plus size={16} />
         <span>添加分类</span>
@@ -69,7 +69,7 @@ export function CategoryForm() {
                   className={`p-2 flex items-center justify-center rounded-md border-2 transition-colors ${
                     icon === i
                       ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-gray-200 hover:border-gray-300 text-gray-500'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-500 dark:text-gray-400'
                   }`}
                 >
                   <CategoryIcon name={i} size={20} />
@@ -90,7 +90,7 @@ export function CategoryForm() {
                   onClick={() => setColor(c)}
                   className={`w-10 h-10 rounded-md border-2 transition-all ${
                     color === c
-                      ? 'border-gray-800 scale-110'
+                      ? 'border-gray-800 dark:border-white scale-110'
                       : 'border-transparent hover:scale-105'
                   }`}
                   style={{ backgroundColor: c }}

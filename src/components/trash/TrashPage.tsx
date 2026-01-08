@@ -38,13 +38,13 @@ export function TrashPage({ isOpen, onClose }: TrashPageProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-red-100 text-red-700'
+        return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-700'
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
       case 'low':
-        return 'bg-green-100 text-green-700'
+        return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
       default:
-        return 'bg-gray-100 text-gray-700'
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400'
     }
   }
 
@@ -69,18 +69,18 @@ export function TrashPage({ isOpen, onClose }: TrashPageProps) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
+        className="bg-bg-card rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
         onClick={(e) => {
           e.stopPropagation()
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">回收站</h2>
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-text-primary">回收站</h2>
           <button
             onClick={onClose}
             type="button"
-            className="p-2 hover:bg-gray-100 rounded-md"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -93,15 +93,15 @@ export function TrashPage({ isOpen, onClose }: TrashPageProps) {
         <div className="p-4 overflow-y-auto flex-1">
           {deletedTodos.length === 0 ? (
             <div className="text-center py-12">
-              <Trash2 size={48} className="mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-500">回收站为空</p>
-              <p className="text-sm text-gray-400 mt-2">删除的待办会显示在这里</p>
+              <Trash2 size={48} className="mx-auto text-gray-400 dark:text-gray-600 mb-4" />
+              <p className="text-text-secondary">回收站为空</p>
+              <p className="text-sm text-text-secondary mt-2">删除的待办会显示在这里</p>
             </div>
           ) : (
             <div>
               {/* Toolbar */}
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-text-secondary">
                   共 {deletedTodos.length} 个已删除的待办
                 </p>
                 <button
@@ -119,12 +119,12 @@ export function TrashPage({ isOpen, onClose }: TrashPageProps) {
                 {deletedTodos.map((todo) => (
                   <div
                     key={todo.id}
-                    className="p-4 bg-gray-50 rounded-lg border border-gray-200"
+                    className="p-4 bg-gray-50 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className={`font-medium truncate ${todo.completed ? 'line-through text-gray-400' : ''}`}>
+                          <h3 className={`font-medium truncate ${todo.completed ? 'line-through text-gray-400 dark:text-gray-500' : 'text-text-primary'}`}>
                             {todo.title}
                           </h3>
                           <span className={`px-2 py-0.5 text-xs rounded-full flex-shrink-0 ${getPriorityColor(todo.priority)}`}>
@@ -132,11 +132,11 @@ export function TrashPage({ isOpen, onClose }: TrashPageProps) {
                           </span>
                         </div>
                         {todo.description && (
-                          <p className="text-sm text-gray-500 line-clamp-2 mb-2">
+                          <p className="text-sm text-text-secondary line-clamp-2 mb-2">
                             {todo.description}
                           </p>
                         )}
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                        <div className="flex items-center gap-4 text-xs text-text-secondary">
                           <span>删除于 {formatDistanceToNow(todo.deletedAt!, { addSuffix: true, locale: zhCN })}</span>
                           {todo.dueDate && (
                             <span>截止: {new Date(todo.dueDate).toLocaleDateString('zh-CN')}</span>
@@ -149,7 +149,7 @@ export function TrashPage({ isOpen, onClose }: TrashPageProps) {
                         <button
                           onClick={() => handleRestore(todo.id)}
                           type="button"
-                          className="p-2 text-green-600 hover:bg-green-50 rounded-md"
+                          className="p-2 text-green-600 dark:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-md"
                           title="恢复"
                         >
                           <RotateCcw size={18} />
@@ -157,7 +157,7 @@ export function TrashPage({ isOpen, onClose }: TrashPageProps) {
                         <button
                           onClick={() => handlePermanentDelete(todo.id)}
                           type="button"
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+                          className="p-2 text-red-600 dark:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md"
                           title="永久删除"
                         >
                           <AlertTriangle size={18} />
@@ -169,9 +169,9 @@ export function TrashPage({ isOpen, onClose }: TrashPageProps) {
               </div>
 
               {/* Footer Info */}
-              <div className="mt-4 p-3 bg-yellow-50 rounded-md flex items-start gap-2">
-                <AlertTriangle size={16} className="text-yellow-600 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-yellow-800">
+              <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-md flex items-start gap-2">
+                <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-yellow-800 dark:text-yellow-400">
                   回收站中的待办会被保留。你可以恢复它们或永久删除。永久删除后无法恢复。
                 </p>
               </div>
