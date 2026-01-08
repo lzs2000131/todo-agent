@@ -21,7 +21,7 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
     openaiCustomPrompt,
     openaiCustomHeaders,
     openaiCustomBody,
-    s3Config,
+    ossConfig,
     updateSettings,
     syncEnabled,
     screenshotShortcut,
@@ -43,11 +43,12 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
   const [shortcutError, setShortcutError] = useState('');
   const [saveMessage, setSaveMessage] = useState('');
 
-  const [s3Bucket, setS3Bucket] = useState(s3Config?.bucket || '');
-  const [s3Region, setS3Region] = useState(s3Config?.region || '');
-  const [s3AccessKeyId, setS3AccessKeyId] = useState(s3Config?.accessKeyId || '');
-  const [s3SecretKey, setS3SecretKey] = useState(s3Config?.secretAccessKey || '');
-  const [showS3Secret, setShowS3Secret] = useState(false);
+  const [ossEndpoint, setOssEndpoint] = useState(ossConfig?.endpoint || '');
+  const [ossBucket, setOssBucket] = useState(ossConfig?.bucket || '');
+  const [ossRegion, setOssRegion] = useState(ossConfig?.region || '');
+  const [ossAccessKeyId, setOssAccessKeyId] = useState(ossConfig?.accessKeyId || '');
+  const [ossSecretKey, setOssSecretKey] = useState(ossConfig?.secretAccessKey || '');
+  const [showOssSecret, setShowOssSecret] = useState(false);
 
   // 当快捷键从 store 更新时,同步到本地状态
   useEffect(() => {
@@ -102,11 +103,12 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
       openaiCustomHeaders: parsedHeaders,
       openaiCustomBody: parsedBody,
       screenshotShortcut: localShortcut,
-      s3Config: (s3Bucket && s3Region && s3AccessKeyId && s3SecretKey) ? {
-        bucket: s3Bucket.trim(),
-        region: s3Region.trim(),
-        accessKeyId: s3AccessKeyId.trim(),
-        secretAccessKey: s3SecretKey.trim(),
+      ossConfig: (ossEndpoint && ossBucket && ossRegion && ossAccessKeyId && ossSecretKey) ? {
+        endpoint: ossEndpoint.trim(),
+        bucket: ossBucket.trim(),
+        region: ossRegion.trim(),
+        accessKeyId: ossAccessKeyId.trim(),
+        secretAccessKey: ossSecretKey.trim(),
       } : undefined,
     });
 
@@ -123,7 +125,6 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center"
-        onClick={onClose}
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
@@ -273,53 +274,65 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
               {/* Divider */}
               <hr className="border-gray-200" />
 
-              {/* AWS S3 Configuration */}
+              {/* OSS Configuration */}
               <section>
                 <div className="flex items-center gap-2 mb-3">
                   <Cloud className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-medium text-gray-900">AWS S3 云端同步</h3>
+                  <h3 className="text-lg font-medium text-gray-900">OSS 云端同步</h3>
                 </div>
                 <p className="text-sm text-gray-600 mb-3">
-                  可选: 配置 S3 以启用数据云端备份和多设备同步
+                  可选: 配置 OSS 以启用数据云端备份和多设备同步（支持阿里云 OSS、腾讯云 COS、MinIO、AWS S3 等 S3 兼容存储）
                 </p>
 
                 <div className="space-y-3">
                   <Input
+                    label="服务端点 (Endpoint)"
+                    value={ossEndpoint}
+                    onChange={(e) => setOssEndpoint(e.target.value)}
+                    placeholder="https://oss-cn-hangzhou.aliyuncs.com"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    常用端点: 阿里云 <code className="bg-gray-100 px-1 rounded">https://oss-cn-hangzhou.aliyuncs.com</code>，
+                    腾讯云 <code className="bg-gray-100 px-1 rounded">https://cos.ap-guangzhou.myqcloud.com</code>，
+                    AWS <code className="bg-gray-100 px-1 rounded">https://s3.amazonaws.com</code>
+                  </p>
+
+                  <Input
                     label="Bucket 名称"
-                    value={s3Bucket}
-                    onChange={(e) => setS3Bucket(e.target.value)}
+                    value={ossBucket}
+                    onChange={(e) => setOssBucket(e.target.value)}
                     placeholder="my-todo-backup"
                   />
 
                   <Input
-                    label="AWS Region"
-                    value={s3Region}
-                    onChange={(e) => setS3Region(e.target.value)}
-                    placeholder="us-east-1"
+                    label="Region"
+                    value={ossRegion}
+                    onChange={(e) => setOssRegion(e.target.value)}
+                    placeholder="cn-hangzhou"
                   />
 
                   <Input
                     label="Access Key ID"
-                    value={s3AccessKeyId}
-                    onChange={(e) => setS3AccessKeyId(e.target.value)}
-                    placeholder="AKIAIOSFODNN7EXAMPLE"
+                    value={ossAccessKeyId}
+                    onChange={(e) => setOssAccessKeyId(e.target.value)}
+                    placeholder="LTAI5txxxxxxxx"
                   />
 
                   <div className="relative">
                     <Input
                       label="Secret Access Key"
-                      type={showS3Secret ? 'text' : 'password'}
-                      value={s3SecretKey}
-                      onChange={(e) => setS3SecretKey(e.target.value)}
-                      placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+                      type={showOssSecret ? 'text' : 'password'}
+                      value={ossSecretKey}
+                      onChange={(e) => setOssSecretKey(e.target.value)}
+                      placeholder="xxxxxxxxxxxxxxxx"
                       className="pr-10"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowS3Secret(!showS3Secret)}
+                      onClick={() => setShowOssSecret(!showOssSecret)}
                       className="absolute right-3 top-8 text-gray-400 hover:text-gray-600"
                     >
-                      {showS3Secret ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showOssSecret ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
@@ -329,7 +342,7 @@ export function SettingsPage({ isOpen, onClose }: SettingsPageProps) {
               <section className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
                   <h4 className="font-medium text-gray-900">启用云端同步</h4>
-                  <p className="text-sm text-gray-600">自动备份数据到 S3</p>
+                  <p className="text-sm text-gray-600">自动备份数据到 OSS</p>
                 </div>
                 <button
                   onClick={() => updateSettings({ syncEnabled: !syncEnabled })}

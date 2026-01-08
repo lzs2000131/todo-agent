@@ -61,7 +61,8 @@ export interface Settings {
   openaiCustomPrompt?: string; // 用户自定义提示词
   openaiCustomHeaders?: Record<string, string>; // 自定义 headers
   openaiCustomBody?: Record<string, unknown>; // 自定义 body
-  s3Config?: {
+  ossConfig?: {
+    endpoint: string;
     bucket: string;
     region: string;
     accessKeyId: string;

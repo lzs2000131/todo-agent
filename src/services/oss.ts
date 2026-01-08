@@ -1,7 +1,8 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import type { Todo, Category } from '@/types';
 
-interface S3Config {
+export interface OSSConfig {
+  endpoint: string;        // OSS 服务端点，如 https://oss-cn-hangzhou.aliyuncs.com
   bucket: string;
   region: string;
   accessKeyId: string;
@@ -17,15 +18,18 @@ interface SyncData {
 }
 
 /**
- * 创建S3客户端
+ * 创建 OSS 客户端
+ * 使用 S3 兼容接口，支持阿里云 OSS、腾讯云 COS、MinIO 等
  */
-function createS3Client(config: S3Config): S3Client {
+function createOSSClient(config: OSSConfig): S3Client {
   return new S3Client({
     region: config.region,
+    endpoint: config.endpoint,
     credentials: {
       accessKeyId: config.accessKeyId,
       secretAccessKey: config.secretAccessKey,
     },
+    forcePathStyle: true, // 兼容非 AWS S3 服务
   });
 }
 
@@ -42,14 +46,14 @@ function getDeviceId(): string {
 }
 
 /**
- * 上传数据到S3
+ * 上传数据到 OSS
  */
-export async function uploadToS3(
-  config: S3Config,
+export async function uploadToOSS(
+  config: OSSConfig,
   todos: Todo[],
   categories: Category[]
 ): Promise<void> {
-  const s3Client = createS3Client(config);
+  const ossClient = createOSSClient(config);
 
   const syncData: SyncData = {
     todos,
@@ -62,7 +66,7 @@ export async function uploadToS3(
   const key = 'todo-agent-data.json';
 
   try {
-    await s3Client.send(
+    await ossClient.send(
       new PutObjectCommand({
         Bucket: config.bucket,
         Key: key,
@@ -70,24 +74,24 @@ export async function uploadToS3(
         ContentType: 'application/json',
       })
     );
-    console.log('数据已备份到S3');
+    console.log('数据已备份到 OSS');
   } catch (error) {
-    console.error('上传到S3失败:', error);
+    console.error('上传到 OSS 失败:', error);
     throw new Error('云端备份失败');
   }
 }
 
 /**
- * 从S3下载数据
+ * 从 OSS 下载数据
  */
-export async function downloadFromS3(
-  config: S3Config
+export async function downloadFromOSS(
+  config: OSSConfig
 ): Promise<SyncData | null> {
-  const s3Client = createS3Client(config);
+  const ossClient = createOSSClient(config);
   const key = 'todo-agent-data.json';
 
   try {
-    const response = await s3Client.send(
+    const response = await ossClient.send(
       new GetObjectCommand({
         Bucket: config.bucket,
         Key: key,
@@ -102,10 +106,10 @@ export async function downloadFromS3(
     return JSON.parse(bodyString);
   } catch (error: any) {
     if (error.name === 'NoSuchKey') {
-      console.log('S3中没有备份数据');
+      console.log('OSS 中没有备份数据');
       return null;
     }
-    console.error('从S3下载失败:', error);
+    console.error('从 OSS 下载失败:', error);
     throw new Error('云端同步失败');
   }
 }
@@ -113,17 +117,17 @@ export async function downloadFromS3(
 /**
  * 同步数据(智能合并)
  */
-export async function syncWithS3(
-  config: S3Config,
+export async function syncWithOSS(
+  config: OSSConfig,
   localTodos: Todo[],
   localCategories: Category[]
 ): Promise<{ todos: Todo[]; categories: Category[] } | null> {
   try {
-    const remoteData = await downloadFromS3(config);
+    const remoteData = await downloadFromOSS(config);
 
     if (!remoteData) {
-      // S3上没有数据,上传本地数据
-      await uploadToS3(config, localTodos, localCategories);
+      // OSS 上没有数据,上传本地数据
+      await uploadToOSS(config, localTodos, localCategories);
       return null;
     }
 
@@ -141,9 +145,9 @@ export async function syncWithS3(
         categories: remoteData.categories,
       };
     } else {
-      // 本地数据更新,上传到S3
+      // 本地数据更新,上传到 OSS
       console.log('上传本地数据到云端');
-      await uploadToS3(config, localTodos, localCategories);
+      await uploadToOSS(config, localTodos, localCategories);
       return null;
     }
   } catch (error) {
@@ -191,19 +195,19 @@ export function mergeData(
 
 /**
  * 启动自动备份
- * @param config S3配置
+ * @param config OSS 配置
  * @param getTodos 获取待办列表的函数
  * @param getCategories 获取分类列表的函数
  * @param intervalMinutes 备份间隔(分钟)
  */
 export function startAutoBackup(
-  config: S3Config | undefined,
+  config: OSSConfig | undefined,
   getTodos: () => Todo[],
   getCategories: () => Category[],
   intervalMinutes: number = 60
 ): (() => void) | null {
   if (!config) {
-    console.log('未配置S3,跳过自动备份');
+    console.log('未配置 OSS,跳过自动备份');
     return null;
   }
 
@@ -211,13 +215,13 @@ export function startAutoBackup(
   const interval = setInterval(() => {
     const todos = getTodos();
     const categories = getCategories();
-    uploadToS3(config, todos, categories).catch(console.error);
+    uploadToOSS(config, todos, categories).catch(console.error);
   }, intervalMinutes * 60 * 1000);
 
   // 启动时立即备份一次
   const todos = getTodos();
   const categories = getCategories();
-  uploadToS3(config, todos, categories).catch(console.error);
+  uploadToOSS(config, todos, categories).catch(console.error);
 
   // 返回清理函数
   return () => clearInterval(interval);

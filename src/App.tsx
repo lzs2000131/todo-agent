@@ -16,7 +16,7 @@ import { useScreenshotQueueStore } from './stores/screenshotQueueStore'
 import { useScreenshot } from './hooks/useScreenshot'
 import { useShortcut } from './hooks/useShortcut'
 import { startReminderScheduler } from './services/notification'
-import { startAutoBackup } from './services/s3'
+import { startAutoBackup } from './services/oss'
 import { Toast } from './components/ui/Toast'
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
   const [trashOpen, setTrashOpen] = useState(false)
   const { fetchCategories, categories } = useCategoryStore()
   const { todos } = useTodoStore()
-  const { s3Config, syncEnabled, screenshotShortcut } = useSettingsStore()
+  const { ossConfig, syncEnabled, screenshotShortcut } = useSettingsStore()
   const { queue, openQueue } = useScreenshotQueueStore()
   const { initShortcut } = useShortcut()
   const { handleScreenshot } = useScreenshot()
@@ -79,14 +79,14 @@ function App() {
 
     // 每60分钟自动备份一次
     const cleanup = startAutoBackup(
-      s3Config,
+      ossConfig,
       () => todos,
       () => categories,
       60
     )
 
     return cleanup || undefined
-  }, [initialized, syncEnabled, s3Config, todos, categories])
+  }, [initialized, syncEnabled, ossConfig, todos, categories])
 
   if (error) {
     return (

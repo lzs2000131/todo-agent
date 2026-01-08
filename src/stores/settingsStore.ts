@@ -30,7 +30,7 @@ export const useSettingsStore = create<SettingsState>()(
       clearApiKeys: () => {
         set({
           openaiApiKey: undefined,
-          s3Config: undefined,
+          ossConfig: undefined,
         })
       },
     }),
